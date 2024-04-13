@@ -19,6 +19,22 @@ public class ClearCounter : BaseCounter,IKObjInterActions
     private KObjScript kObjScript;
     private IKObjInterActions nextCounter;
     private GameObject kObj;
+    private event Action<bool> onCounterActionsEnableEvent;
+    private bool _isCounterActionsEnable;
+    private bool isCounterActionsEnable
+    {
+        get{return _isCounterActionsEnable;}
+        set
+        { 
+            _isCounterActionsEnable = value;
+            if(_isCounterActionsEnable)
+            {
+                onCounterActionsEnableEvent?.Invoke(true);
+            }
+        }
+    }
+    private Camera m_Camera;
+    private string hitedCounterName;
 
     new void Awake()
     {
@@ -28,7 +44,34 @@ public class ClearCounter : BaseCounter,IKObjInterActions
             instance = this;
         }
         BaseCounter.counterList.Add(this);
-        //Debug.Log("0 Now List has " + BaseCounter.counterList.Count + " counter " + this.name);
+        BaseCounter.playerActions.OnClickEvents += toClick;
+        onCounterActionsEnableEvent += OnCounterActionsEnable;
+        m_Camera = Camera.main;
+        hitedCounterName = "ClearCounterSelected" + InstanceID;
+        this.GetTransform().Find("ClearCounterSelected").name = hitedCounterName;
+    }
+
+    private void toClick(object sender, OnClickArgs e)
+    {
+        //Debug.Log("Clicked!");
+        Vector3 mousePosition = e.mousePosition;
+        Ray ray = m_Camera.ScreenPointToRay(mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Debug.Log("Hited is " + hit.collider.gameObject.name);
+            if(hit.collider.gameObject.name == this.hitedCounterName)
+            {
+                this.isCounterActionsEnable = true;
+            }else
+            {
+                this.isCounterActionsEnable = false;
+            }
+        }
+    }
+
+    private void OnCounterActionsEnable(bool e)
+    {
+        Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
     }
 
     new void Start()

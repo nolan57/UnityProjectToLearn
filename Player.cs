@@ -20,10 +20,10 @@ public class OnHitedEventArgs:EventArgs
         get;set;
     }
 }
-public class IsEnableArgs:EventArgs
+public class IsPlayerActionsEnableArgs:EventArgs
 {
     public string whatHappen;
-    public IsEnableArgs(string whatHappen)
+    public IsPlayerActionsEnableArgs(string whatHappen)
     {
         this.whatHappen=whatHappen;
     }
@@ -50,27 +50,28 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
     private bool Holded;
     private GameObject kObj;
     private Camera m_Camera;
-    private bool _isEnable;
-    private bool isEnable
+    private bool _isPlayerActionsEnable;
+    private bool isPlayerActionsEnable
     {
-        get{return _isEnable;}
+        get{return _isPlayerActionsEnable;}
         set
         { 
-            _isEnable = value;
-            if(_isEnable)
+            _isPlayerActionsEnable = value;
+            if(_isPlayerActionsEnable)
             {
-                onEnableEvent?.Invoke(true);
+                onPlayerActionsEnableEvent?.Invoke(true);
             }
         }
     }
     //private event Action<IsEnableArgs> onEnableEvent;
-    private event Action<bool> onEnableEvent;
+    private event Action<bool> onPlayerActionsEnableEvent;
     private void Awake()
     {
         if(instance == null)
         {
             instance = this;
         }
+        this.transform.Find("PointerOver").gameObject.SetActive(false);
         Holded = false;
         transform.position = new Vector3(0, 0,-5);
         lastInteractionDir = transform.position;
@@ -81,14 +82,14 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         playerActions.OnWSDAEvent += toMove;
         playerActions.OnArrowsEvent += toMove;
         playerActions.OnClickEvents += toClick;
-        onEnableEvent += onEnableAction;
+        onPlayerActionsEnableEvent += onEnableAction;
         Physics.queriesHitTriggers = true;
         m_Camera = Camera.main;
     }
 
     private void onEnableAction(bool e)
     {
-        Debug.Log(e);
+        Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
     }
 
     private void toClick(object sender, OnClickArgs e)
@@ -101,17 +102,21 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
             Debug.Log("Hited is " + hit.collider.gameObject.name);
             if(hit.collider.gameObject.name == "Player")
             {
-                this.isEnable = true;
+                this.isPlayerActionsEnable = true;
             }else
             {
-                this.isEnable = false;
+                this.isPlayerActionsEnable = false;
+                if(this.transform.Find("PointerOver").gameObject.activeSelf)
+                {
+                    this.transform.Find("PointerOver").gameObject.SetActive(false);
+                }
             }
         }
     }
 
     private void toMove(object sender, MoveArgs e)
     {
-        if(!isEnable){
+        if(!isPlayerActionsEnable){
             return;
         }
         handleMove(e.vector,e.moveDir);
@@ -120,7 +125,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
 
     private void toRelease(object sender, InteractionArgs e)
     {
-        if(!isEnable){
+        if(!isPlayerActionsEnable){
             return;
         }
         if(this.kObj != null && Holded)
@@ -144,7 +149,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
 
     private void toPickUp(object sender, InteractionArgs e)
     {
-        if(!isEnable){
+        if(!isPlayerActionsEnable){
             return;
         }
         if(this.counter != null)
@@ -173,7 +178,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
 
     private void toClear(object sender, InteractionArgs e)
     {
-        if(!isEnable){
+        if(!isPlayerActionsEnable){
             return;
         }
         ClearKObj();
@@ -218,7 +223,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
 
     private void toSelect(object sender, InteractionArgs e)
     {
-        if(!isEnable){
+        if(!isPlayerActionsEnable){
             return;
         }
         if(this.counter != null)
@@ -384,5 +389,20 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
     public void releaseKObj()
     {
         Destroy(this.kObj);;
+    }
+    void OnMouseEnter()
+    {
+        if(this.isPlayerActionsEnable == true)
+        {
+            return;
+        }
+        this.transform.Find("PointerOver").gameObject.SetActive(true);
+    }
+    void OnMouseExit()
+    {
+        if(this.isPlayerActionsEnable == false)
+        {
+            this.transform.Find("PointerOver").gameObject.SetActive(false);
+        }
     }
 }

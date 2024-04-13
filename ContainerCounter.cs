@@ -20,6 +20,23 @@ public class ContainerCounter : BaseCounter,IKObjInterActions
     private KObjScript kObjScript;
     private IKObjInterActions nextCounter;
     private GameObject kObj;
+    private event Action<bool> onCounterctionsEnableEvent;
+    private bool _isCounterActionsEnable;
+    private bool isCounterActionsEnable
+    {
+        get{return _isCounterActionsEnable;}
+        set
+        { 
+            _isCounterActionsEnable = value;
+            if(_isCounterActionsEnable)
+            {
+                onCounterctionsEnableEvent?.Invoke(true);
+            }
+        }
+    }
+    private Camera m_Camera;
+
+    private string hitedCounterName;
 
     new void Awake()
     {
@@ -29,7 +46,35 @@ public class ContainerCounter : BaseCounter,IKObjInterActions
             instance = this;
         }
         BaseCounter.counterList.Add(this);
-        //Debug.Log("1 Now List has " + BaseCounter.counterList.Count + " counter " + this.name);
+        BaseCounter.playerActions.OnClickEvents += toClick;
+        onCounterctionsEnableEvent += OnCounterActionsEnable;
+        m_Camera = Camera.main;
+        hitedCounterName = "ContainerCounterSelected" + InstanceID;
+        this.GetTransform().Find("ContainerCounterSelected").name = hitedCounterName;
+
+    }
+
+    private void OnCounterActionsEnable(bool e)
+    {
+        Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
+    }
+
+    private void toClick(object sender, OnClickArgs e)
+    {
+        //Debug.Log("Clicked!");
+        Vector3 mousePosition = e.mousePosition;
+        Ray ray = m_Camera.ScreenPointToRay(mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Debug.Log("Hited is " + hit.collider.gameObject.name);
+            if(hit.collider.gameObject.name == this.hitedCounterName)
+            {
+                this.isCounterActionsEnable = true;
+            }else
+            {
+                this.isCounterActionsEnable = false;
+            }
+        }
     }
 
     new void Start()

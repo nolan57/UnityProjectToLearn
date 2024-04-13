@@ -17,6 +17,7 @@ public class BaseCounter : MonoBehaviour
     }
     [SerializeField] protected GameObject ClearCounterTop;
     [SerializeField] protected KitcherObjectSO kitcherObject;
+    /* [SerializeField]  */protected static PlayerActions playerActions;
     public static List<IKObjInterActions> counterList;
     protected void Awake()
     {
@@ -26,6 +27,10 @@ public class BaseCounter : MonoBehaviour
         {
             //Debug.Log("new List<ICounterAtions>!");
             counterList = new List<IKObjInterActions>();
+        }
+        if(playerActions == null)
+        {
+            playerActions = GameObject.FindFirstObjectByType<PlayerActions>();
         }
     }
     protected void Start()
