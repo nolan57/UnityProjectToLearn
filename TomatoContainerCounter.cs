@@ -9,13 +9,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ContainerCounter : BaseCounter//,IKObjInterActions
+public class TomatoContainerCounter : BaseCounter//,IKObjInterActions
 {
-    public static ContainerCounter instance
+    public static TomatoContainerCounter instance
     {
         get;private set;
     }
     //private static BaseCounter[] cList;
+    //[SerializeField] private new GameObject selectedPart;
     private new KObjScript kObjScript;
     private new IKObjInterActions nextCounter;
     private new GameObject kObj;
@@ -42,12 +43,13 @@ public class ContainerCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.counterList.Add(this);
+        BaseCounter.tomatoCounterList.Add(this);
+        Debug.Log("tomatoCounterList now has " + tomatoCounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterctionsEnableEvent += OnCounterActionsEnable;
         //m_Camera = Camera.main;
-        hitedCounterName = "ContainerCounterSelected" + InstanceID;
-        this.GetTransform().Find("ContainerCounterSelected").name = hitedCounterName;
+        hitedCounterName = "TamtoContainerCounterSelected" + InstanceID;
+        this.GetTransform().Find("TamtoContainerCounterSelected").name = hitedCounterName;
     }
     private void OnCounterActionsEnable(bool e)
     {
@@ -74,6 +76,10 @@ public class ContainerCounter : BaseCounter//,IKObjInterActions
     new void Start()
     {
         base.Start();
+    }
+    public new void setSelectedPartVisual(bool viusal)
+    {
+        this.selectedPart.SetActive(viusal);
     }
     /* public new void setKObjScript(KObjScript kObjScript)
     {

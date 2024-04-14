@@ -15,5 +15,5 @@ public interface IKObjInterActions
     public string getName();
     public int getInstanceID();
     public void releaseKObj();
-
+    public void setSelectedPartVisual(bool viusal);
 }

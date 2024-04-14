@@ -228,6 +228,11 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         }
         if(this.counter != null)
         {
+            if(this.counter.GetType() == typeof(TomatoClearCounter))
+            {
+                Debug.Log("This is Clear Counter,Not a Container Counter");
+                return;
+            }
             putKObj();
         }else
         {
@@ -404,5 +409,14 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         {
             this.transform.Find("PointerOver").gameObject.SetActive(false);
         }
+    }
+
+    public Transform getSelectedPart()
+    {
+        return null;
+    }
+
+    public void setSelectedPartVisual(bool viusal)
+    {
     }
 }

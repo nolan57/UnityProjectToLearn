@@ -9,13 +9,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ClearCounter : BaseCounter//,IKObjInterActions
+public class CheezeClearCounter : BaseCounter//,IKObjInterActions
 {
-    public static ClearCounter instance
+    public static CheezeClearCounter instance
     {
         get;private set;
     }
     //private static BaseCounter[] cList;
+    //[SerializeField] private new GameObject selectedPart;
     private new KObjScript kObjScript;
     private new IKObjInterActions nextCounter;
     private new GameObject kObj;
@@ -42,12 +43,13 @@ public class ClearCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.counterList.Add(this);
+        BaseCounter.cheezeCounterList.Add(this);
+        Debug.Log("cheezeCounterList now has " + cheezeCounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterActionsEnableEvent += OnCounterActionsEnable;
         //m_Camera = Camera.main;
-        hitedCounterName = "ClearCounterSelected" + InstanceID;
-        this.GetTransform().Find("ClearCounterSelected").name = hitedCounterName;
+        hitedCounterName = "CheezeClearCounterSelected" + InstanceID;
+        this.GetTransform().Find("CheezeClearCounterSelected").name = hitedCounterName;
     }
 
     private void toClick(object sender, OnClickArgs e)
@@ -77,6 +79,10 @@ public class ClearCounter : BaseCounter//,IKObjInterActions
     }
     protected void Update()
     {
+    }
+    public new void setSelectedPartVisual(bool viusal)
+    {
+        this.selectedPart.SetActive(viusal);
     }
     /*
     public void setKObjScript(KObjScript kObjScript)

@@ -21,7 +21,8 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
     protected KObjScript kObjScript;
     protected IKObjInterActions nextCounter;
     protected GameObject kObj;
-    public static List<IKObjInterActions> counterList;
+    [SerializeField] protected GameObject selectedPart;
+    public static List<IKObjInterActions> tomatoCounterList,cheezeCounterList;
     protected static Camera m_Camera;
     protected string hitedCounterName;
     protected bool _isCounterActionsEnable;
@@ -29,11 +30,17 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
     {
         instanceID = NextID;
         NextID++;
-        if(counterList == null)
+        if(tomatoCounterList == null)
         {
             //Debug.Log("new List<ICounterAtions>!");
-            counterList = new List<IKObjInterActions>();
+            tomatoCounterList = new List<IKObjInterActions>();
         }
+        if(cheezeCounterList == null)
+        {
+            //Debug.Log("new List<ICounterAtions>!");
+            cheezeCounterList = new List<IKObjInterActions>();
+        }
+
         if(playerActions == null)
         {
             playerActions = GameObject.FindFirstObjectByType<PlayerActions>();
@@ -97,4 +104,8 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
         Destroy(this.kObj);
     }
 
+    public void setSelectedPartVisual(bool viusal)
+    {
+        this.selectedPart.SetActive(viusal);
+    }
 }
