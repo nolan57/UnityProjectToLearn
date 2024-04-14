@@ -9,18 +9,18 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ClearCounter : BaseCounter,IKObjInterActions
+public class ClearCounter : BaseCounter//,IKObjInterActions
 {
     public static ClearCounter instance
     {
         get;private set;
     }
     //private static BaseCounter[] cList;
-    private KObjScript kObjScript;
-    private IKObjInterActions nextCounter;
-    private GameObject kObj;
+    private new KObjScript kObjScript;
+    private new IKObjInterActions nextCounter;
+    private new GameObject kObj;
     private event Action<bool> onCounterActionsEnableEvent;
-    private bool _isCounterActionsEnable;
+    private new bool _isCounterActionsEnable;
     private bool isCounterActionsEnable
     {
         get{return _isCounterActionsEnable;}
@@ -33,9 +33,8 @@ public class ClearCounter : BaseCounter,IKObjInterActions
             }
         }
     }
-    private Camera m_Camera;
-    private string hitedCounterName;
-
+    //private Camera m_Camera;
+    private new string hitedCounterName;
     new void Awake()
     {
         base.Awake(); 
@@ -46,7 +45,7 @@ public class ClearCounter : BaseCounter,IKObjInterActions
         BaseCounter.counterList.Add(this);
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterActionsEnableEvent += OnCounterActionsEnable;
-        m_Camera = Camera.main;
+        //m_Camera = Camera.main;
         hitedCounterName = "ClearCounterSelected" + InstanceID;
         this.GetTransform().Find("ClearCounterSelected").name = hitedCounterName;
     }
@@ -67,13 +66,11 @@ public class ClearCounter : BaseCounter,IKObjInterActions
                 this.isCounterActionsEnable = false;
             }
         }
-    }
-
+    } 
     private void OnCounterActionsEnable(bool e)
     {
         Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
     }
-
     new void Start()
     {
         base.Start();
@@ -81,7 +78,7 @@ public class ClearCounter : BaseCounter,IKObjInterActions
     protected void Update()
     {
     }
-
+    /*
     public void setKObjScript(KObjScript kObjScript)
     {
         this.kObjScript = kObjScript;
@@ -133,5 +130,5 @@ public class ClearCounter : BaseCounter,IKObjInterActions
     public void releaseKObj()
     {
         Destroy(this.kObj);
-    }
+    } */
 }

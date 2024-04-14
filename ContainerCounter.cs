@@ -9,20 +9,19 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ContainerCounter : BaseCounter,IKObjInterActions
+public class ContainerCounter : BaseCounter//,IKObjInterActions
 {
-
     public static ContainerCounter instance
     {
         get;private set;
     }
     //private static BaseCounter[] cList;
-    private KObjScript kObjScript;
-    private IKObjInterActions nextCounter;
-    private GameObject kObj;
+    private new KObjScript kObjScript;
+    private new IKObjInterActions nextCounter;
+    private new GameObject kObj;
     private event Action<bool> onCounterctionsEnableEvent;
-    private bool _isCounterActionsEnable;
-    private bool isCounterActionsEnable
+    private new bool _isCounterActionsEnable;
+     private bool isCounterActionsEnable
     {
         get{return _isCounterActionsEnable;}
         set
@@ -33,11 +32,9 @@ public class ContainerCounter : BaseCounter,IKObjInterActions
                 onCounterctionsEnableEvent?.Invoke(true);
             }
         }
-    }
-    private Camera m_Camera;
-
-    private string hitedCounterName;
-
+    } 
+    //private new Camera m_Camera;
+    private new string hitedCounterName;
     new void Awake()
     {
         base.Awake();
@@ -48,16 +45,14 @@ public class ContainerCounter : BaseCounter,IKObjInterActions
         BaseCounter.counterList.Add(this);
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterctionsEnableEvent += OnCounterActionsEnable;
-        m_Camera = Camera.main;
+        //m_Camera = Camera.main;
         hitedCounterName = "ContainerCounterSelected" + InstanceID;
         this.GetTransform().Find("ContainerCounterSelected").name = hitedCounterName;
-
     }
-
     private void OnCounterActionsEnable(bool e)
     {
         Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
-    }
+    } 
 
     private void toClick(object sender, OnClickArgs e)
     {
@@ -75,38 +70,36 @@ public class ContainerCounter : BaseCounter,IKObjInterActions
                 this.isCounterActionsEnable = false;
             }
         }
-    }
-
+    } 
     new void Start()
     {
         base.Start();
     }
-
-    public void setKObjScript(KObjScript kObjScript)
+    /* public new void setKObjScript(KObjScript kObjScript)
     {
         this.kObjScript = kObjScript;
     }
-    public KObjScript getKObjScript()
+    public new KObjScript getKObjScript()
     {
         return this.kObjScript;
     }
-    public void setNext(IKObjInterActions nextCounter)
+    public new void setNext(IKObjInterActions nextCounter)
     {
         this.nextCounter = nextCounter;
     }
-    public IKObjInterActions getNext()
+    public new IKObjInterActions getNext()
     {
         return this.nextCounter;
     }
-    public KitcherObjectSO GetKitcherObjectSO()
+    public new KitcherObjectSO GetKitcherObjectSO()
     {
         return this.kitcherObject;
     }
-    public GameObject getKObj()
+    public new GameObject getKObj()
     {
         return this.kObj;
     }
-    public void setKObj(GameObject obj)
+    public new void setKObj(GameObject obj)
     {
         this.kObj = obj;
         this.kObj.transform.SetParent(this.GetTransform().Find("CounterTop"));
@@ -115,23 +108,23 @@ public class ContainerCounter : BaseCounter,IKObjInterActions
         this.kObjScript.setCurrentParent(this);
         this.kObj.SetActive(true);
     }
-    public Transform GetTransform()
+    public new Transform GetTransform()
     {
         return this.gameObject.transform;
     }
 
-    public string getName()
+    public new string getName()
     {
         return this.name;
     }
 
-    public int getInstanceID()
+    public new int getInstanceID()
     {
         return this.InstanceID;
     }
 
-    public void releaseKObj()
+    public new void releaseKObj()
     {
         Destroy(this.kObj);
-    }
+    } */
 }
