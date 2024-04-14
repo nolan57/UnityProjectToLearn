@@ -9,9 +9,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CheezeContainerCounter : BaseCounter//,IKObjInterActions
+public class StoveCounter : BaseCounter//,IKObjInterActions
 {
-    public static CheezeContainerCounter instance
+    public static StoveCounter instance
     {
         get;private set;
     }
@@ -44,12 +44,12 @@ public class CheezeContainerCounter : BaseCounter//,IKObjInterActions
             instance = this;
         }
         BaseCounter.CounterList.Add(this);
-        Debug.Log("cheezeCounterList now has " + CounterList.Count());
+        Debug.Log("tomatoCounterList now has " + CounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterctionsEnableEvent += OnCounterActionsEnable;
         //m_Camera = Camera.main;
-        hitedCounterName = "CheezeContainerCounterSelected" + InstanceID;
-        this.GetTransform().Find("CheezeContainerCounterSelected").name = hitedCounterName;
+        hitedCounterName = "StoveCounterSelected" + InstanceID;
+        this.GetTransform().Find("StoveCounterSelected").name = hitedCounterName;
     }
     private void OnCounterActionsEnable(bool e)
     {

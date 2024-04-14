@@ -43,8 +43,8 @@ public class TomatoClearCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.tomatoCounterList.Add(this);
-        Debug.Log("tomatoCounterList now has " + tomatoCounterList.Count());
+        BaseCounter.CounterList.Add(this);
+        Debug.Log("tomatoCounterList now has " + CounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterActionsEnableEvent += OnCounterActionsEnable;
         //m_Camera = Camera.main;

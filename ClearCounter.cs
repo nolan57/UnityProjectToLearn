@@ -9,9 +9,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CheezeClearCounter : BaseCounter//,IKObjInterActions
+public class ClearCounter : BaseCounter//,IKObjInterActions
 {
-    public static CheezeClearCounter instance
+    public static ClearCounter instance
     {
         get;private set;
     }
@@ -43,13 +43,13 @@ public class CheezeClearCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.cheezeCounterList.Add(this);
-        Debug.Log("cheezeCounterList now has " + cheezeCounterList.Count());
+        BaseCounter.CounterList.Add(this);
+        Debug.Log("cheezeCounterList now has " + CounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterActionsEnableEvent += OnCounterActionsEnable;
         //m_Camera = Camera.main;
-        hitedCounterName = "CheezeClearCounterSelected" + InstanceID;
-        this.GetTransform().Find("CheezeClearCounterSelected").name = hitedCounterName;
+        hitedCounterName = "ClearCounterSelected" + InstanceID;
+        this.GetTransform().Find("ClearCounterSelected").name = hitedCounterName;
     }
 
     private void toClick(object sender, OnClickArgs e)

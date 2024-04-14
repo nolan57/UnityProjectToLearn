@@ -228,7 +228,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         }
         if(this.counter != null)
         {
-            if(this.counter.GetType() == typeof(TomatoClearCounter))
+            if(this.counter.GetType() == typeof(ClearCounter))
             {
                 Debug.Log("This is Clear Counter,Not a Container Counter");
                 return;

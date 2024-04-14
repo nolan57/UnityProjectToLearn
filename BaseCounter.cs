@@ -22,7 +22,7 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
     protected IKObjInterActions nextCounter;
     protected GameObject kObj;
     [SerializeField] protected GameObject selectedPart;
-    public static List<IKObjInterActions> tomatoCounterList,cheezeCounterList;
+    public static List<IKObjInterActions> CounterList;
     protected static Camera m_Camera;
     protected string hitedCounterName;
     protected bool _isCounterActionsEnable;
@@ -30,15 +30,15 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
     {
         instanceID = NextID;
         NextID++;
-        if(tomatoCounterList == null)
+        if(CounterList == null)
         {
             //Debug.Log("new List<ICounterAtions>!");
-            tomatoCounterList = new List<IKObjInterActions>();
+            CounterList = new List<IKObjInterActions>();
         }
-        if(cheezeCounterList == null)
+        if(CounterList == null)
         {
             //Debug.Log("new List<ICounterAtions>!");
-            cheezeCounterList = new List<IKObjInterActions>();
+            CounterList = new List<IKObjInterActions>();
         }
 
         if(playerActions == null)
