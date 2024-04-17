@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class KitcherObjectSO : ScriptableObject
 {
-    public GameObject preObj;
+    public GameObject kObj;
     public string objName;
     public Sprite icon;
 }

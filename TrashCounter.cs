@@ -81,6 +81,11 @@ public class TrashCounter : BaseCounter//,IKObjInterActions
     {
         this.selectedPart.SetActive(viusal);
     }
+    public new KitcherObjectSO GetKitcherObjectSO()
+    {
+        Debug.Log("This is Clear Counter only for be Clear!");
+        return null;
+    }
     /* public new void setKObjScript(KObjScript kObjScript)
     {
         this.kObjScript = kObjScript;

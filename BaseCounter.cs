@@ -87,6 +87,10 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
         this.kObjScript.setCurrentParent(this);
         this.kObj.SetActive(true);
     }
+    public void setKObj()
+    {
+
+    }
     public Transform GetTransform()
     {
         return this.transform;

@@ -228,30 +228,34 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         }
         if(this.counter != null)
         {
-            if(this.counter.GetType() == typeof(ClearCounter))
+            /* if(this.counter.GetType() == typeof(ClearCounter))
             {
                 Debug.Log("This is Clear Counter,Not a Container Counter");
                 return;
-            }
-            putKObj();
+            } */
+            newKObj();
         }else
         {
             Debug.Log("Null to Put Kitchen Object");
             return;
         }
     }
-    private void putKObj()
+    private void newKObj()
     {
         Debug.Log("To Select Kitchen Object!");
         Quaternion roatation = Quaternion.identity;
         roatation.Set(0,0,0,0);
-        if(this.counter.getKObj() != null)
+        if(this.counter.getKObj() != null || this.counter.GetKitcherObjectSO() == null)
         {
-            Debug.Log("Counter isn't Clear,Can't put Kitchen Object!");
+            Debug.Log("No Kitchen Object to NEW!");
             return;
         }else
         {
-            this.counter.setKObj((GameObject)Instantiate(this.counter.GetKitcherObjectSO().preObj,SceneManager.GetActiveScene()));
+            GameObject newKObj = (GameObject)Instantiate(
+                                    this.counter.
+                                    GetKitcherObjectSO().kObj,
+                                    SceneManager.GetActiveScene());
+            this.counter.setKObj(newKObj);
             //this.counter.getKObj().transform.SetParent(this.counter.GetTransform().Find("CounterTop"));
             //this.counter.getKObj().transform.localPosition = Vector3.zero;
             // this.counter.setKObjScript(this.counter.getKObj().GetComponent<KObjScript>());

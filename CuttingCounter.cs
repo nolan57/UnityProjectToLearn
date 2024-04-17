@@ -9,9 +9,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TomatoCuttingCounter : BaseCounter//,IKObjInterActions
+public class CuttingCounter : BaseCounter//,IKObjInterActions
 {
-    public static TomatoCuttingCounter instance
+    public static CuttingCounter instance
     {
         get;private set;
     }
@@ -20,7 +20,7 @@ public class TomatoCuttingCounter : BaseCounter//,IKObjInterActions
     private new KObjScript kObjScript;
     private new IKObjInterActions nextCounter;
     private new GameObject kObj;
-    private event Action<bool> onCounterctionsEnableEvent;
+    private event Action<bool> onCounterActionsEnableEvent;
     private new bool _isCounterActionsEnable;
      private bool isCounterActionsEnable
     {
@@ -30,7 +30,7 @@ public class TomatoCuttingCounter : BaseCounter//,IKObjInterActions
             _isCounterActionsEnable = value;
             if(_isCounterActionsEnable)
             {
-                onCounterctionsEnableEvent?.Invoke(true);
+                onCounterActionsEnableEvent?.Invoke(true);
             }
         }
     } 
@@ -46,7 +46,7 @@ public class TomatoCuttingCounter : BaseCounter//,IKObjInterActions
         BaseCounter.CounterList.Add(this);
         Debug.Log("tomatoCounterList now has " + CounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
-        onCounterctionsEnableEvent += OnCounterActionsEnable;
+        onCounterActionsEnableEvent += OnCounterActionsEnable;
         //m_Camera = Camera.main;
         hitedCounterName = "TomatoCuttingCounterSelected" + InstanceID;
         this.GetTransform().Find("TomatoCuttingCounterSelected").name = hitedCounterName;
@@ -81,56 +81,14 @@ public class TomatoCuttingCounter : BaseCounter//,IKObjInterActions
     {
         this.selectedPart.SetActive(viusal);
     }
-    /* public new void setKObjScript(KObjScript kObjScript)
-    {
-        this.kObjScript = kObjScript;
-    }
-    public new KObjScript getKObjScript()
-    {
-        return this.kObjScript;
-    }
-    public new void setNext(IKObjInterActions nextCounter)
-    {
-        this.nextCounter = nextCounter;
-    }
     public new IKObjInterActions getNext()
     {
-        return this.nextCounter;
+        Debug.Log("This is Cutting Counter!");
+        return null;
     }
     public new KitcherObjectSO GetKitcherObjectSO()
     {
-        return this.kitcherObject;
+        Debug.Log("This is Cutting Counter only for Cutting");
+        return null;
     }
-    public new GameObject getKObj()
-    {
-        return this.kObj;
-    }
-    public new void setKObj(GameObject obj)
-    {
-        this.kObj = obj;
-        this.kObj.transform.SetParent(this.GetTransform().Find("CounterTop"));
-        this.kObj.transform.localPosition=Vector3.zero;
-        this.kObjScript = this.kObj.GetComponent<KObjScript>();
-        this.kObjScript.setCurrentParent(this);
-        this.kObj.SetActive(true);
-    }
-    public new Transform GetTransform()
-    {
-        return this.gameObject.transform;
-    }
-
-    public new string getName()
-    {
-        return this.name;
-    }
-
-    public new int getInstanceID()
-    {
-        return this.InstanceID;
-    }
-
-    public new void releaseKObj()
-    {
-        Destroy(this.kObj);
-    } */
 }
