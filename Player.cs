@@ -79,6 +79,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         playerActions.onCKeyPressedEvent += toClear;
         playerActions.onPKeyPressedEvent += toPickUp;
         playerActions.onRKeyPressedEvent += toRelease;
+        playerActions.onVKeyPressedEvent += toCut;
         playerActions.OnWSDAEvent += toMove;
         playerActions.OnArrowsEvent += toMove;
         playerActions.OnClickEvents += toClick;
@@ -87,6 +88,30 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         m_Camera = Camera.main;
     }
 
+    private void toCut(object sender, InteractionArgs e)
+    {
+        if(!isPlayerActionsEnable)
+        {
+            return;
+        }
+        if(this.counter != null)
+        {
+            if(this.counter.getKObj() != null)
+            {
+                CutKObj toCutKObjAction = this.counter.getGameObject().GetComponent<CutKObj>();
+                if( toCutKObjAction != null)
+                {
+                    toCutKObjAction.toCutKObj(this.counter.getKObj());
+                }else{
+                    Debug.Log("Not a cutting counter!");
+                }
+            }else{
+                if(this.counter.GetType() == typeof(CuttingCounter)){
+                    Debug.Log("No Kicthen Object to be cutted!");
+                }
+            }
+        }
+    }
     private void onEnableAction(bool e)
     {
         Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
@@ -422,5 +447,10 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
 
     public void setSelectedPartVisual(bool viusal)
     {
+    }
+
+    public GameObject getGameObject()
+    {
+        return this.gameObject;
     }
 }

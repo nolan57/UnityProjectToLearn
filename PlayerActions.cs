@@ -37,6 +37,7 @@ public class PlayerActions : MonoBehaviour
     public event EventHandler<InteractionArgs> onCKeyPressedEvent;
     public event EventHandler<InteractionArgs> onPKeyPressedEvent;
     public event EventHandler<InteractionArgs> onRKeyPressedEvent;
+    public event EventHandler<InteractionArgs> onVKeyPressedEvent;
     public event EventHandler<MoveArgs> OnWSDAEvent;
     public event EventHandler<MoveArgs> OnArrowsEvent;
     public event EventHandler<OnClickArgs> OnClickEvents;
@@ -54,7 +55,13 @@ public class PlayerActions : MonoBehaviour
         inputActions.Interaction.PickUp.performed += eventByPKeyPressed;
         inputActions.Interaction.Releasse.performed += eventByRKeyPressed;
         inputActions.ToSelectObject.Click.performed += eventByMouseLeftButtonClicked;
+        inputActions.Interaction.Cut.performed += eventByVKeyPressed;
         inputActions.Enable();
+    }
+
+    private void eventByVKeyPressed(InputAction.CallbackContext context)
+    {
+        onVKeyPressedEvent?.Invoke(this, interactionArgs);
     }
 
     private void eventByMouseLeftButtonClicked(InputAction.CallbackContext context)

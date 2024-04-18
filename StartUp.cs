@@ -18,8 +18,7 @@ public class StartUp : MonoBehaviour
         prefabPaths = new string[]
         {
             "PreObjects/TomatoContainerCounter",
-            "PreObjects/TomatoCuttingCounter",
-            "PreObjects/ClearCounter",
+            "PreObjects/CuttingCounter",
             "PreObjects/ClearCounter",
             "PreObjects/TrashCounter",
             "PreObjects/StoveCounter",
@@ -29,7 +28,7 @@ public class StartUp : MonoBehaviour
         prefabPaths = new string[]
         {
             "PreObjects/CheezeContainerCounter",
-            "PreObjects/ClearCounter",
+            "PreObjects/CuttingCounter",
             "PreObjects/ClearCounter",
             "PreObjects/TrashCounter",
             "PreObjects/StoveCounter",

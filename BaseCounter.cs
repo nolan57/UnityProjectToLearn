@@ -112,4 +112,9 @@ public class BaseCounter : MonoBehaviour,IKObjInterActions
     {
         this.selectedPart.SetActive(viusal);
     }
+
+    public GameObject getGameObject()
+    {
+        return this.gameObject;
+    }
 }
