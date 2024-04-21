@@ -9,19 +9,19 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TomatoContainerCounter : BaseCounter//,IKObjInterActions
+public class TomatoContainerCounter : BaseCounter,IContainerCounterActions,IBaseActions//,IKObjInterActions
 {
     public static TomatoContainerCounter instance
     {
         get;private set;
     }
-    //private static BaseCounter[] cList;
-    //[SerializeField] private new GameObject selectedPart;
-    private new KObjScript kObjScript;
-    private new IKObjInterActions nextCounter;
-    private new GameObject kObj;
+    [SerializeField]private KitcherObjectSO kObjSO;
+    private int kObjCount;
+    private KObjScript kObjScript;
+    private new UnityEngine.GameObject nextCounter;
+    private GameObject kObj;
     private event Action<bool> onCounterctionsEnableEvent;
-    private new bool _isCounterActionsEnable;
+    private bool _isCounterActionsEnable;
      private bool isCounterActionsEnable
     {
         get{return _isCounterActionsEnable;}
@@ -35,7 +35,7 @@ public class TomatoContainerCounter : BaseCounter//,IKObjInterActions
         }
     } 
     //private new Camera m_Camera;
-    private new string hitedCounterName;
+    private string counterName;
     new void Awake()
     {
         base.Awake();
@@ -43,13 +43,11 @@ public class TomatoContainerCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.CounterList.Add(this);
-        Debug.Log("tomatoCounterList now has " + CounterList.Count());
+        BaseCounter.CounterList.Add(this.gameObject);
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterctionsEnableEvent += OnCounterActionsEnable;
-        //m_Camera = Camera.main;
-        hitedCounterName = "TamtoContainerCounterSelected" + InstanceID;
-        this.GetTransform().Find("TamtoContainerCounterSelected").name = hitedCounterName;
+        counterName = InstanceID.ToString();
+        this.gameObject.transform.Find("TamtoContainerCounterSelected").name = counterName;
     }
     private void OnCounterActionsEnable(bool e)
     {
@@ -58,13 +56,12 @@ public class TomatoContainerCounter : BaseCounter//,IKObjInterActions
 
     private void toClick(object sender, OnClickArgs e)
     {
-        //Debug.Log("Clicked!");
         Vector3 mousePosition = e.mousePosition;
         Ray ray = m_Camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Debug.Log("Hited is " + hit.collider.gameObject.name);
-            if(hit.collider.gameObject.name == this.hitedCounterName)
+            if(hit.collider.gameObject.name == this.counterName)
             {
                 this.isCounterActionsEnable = true;
             }else
@@ -77,60 +74,35 @@ public class TomatoContainerCounter : BaseCounter//,IKObjInterActions
     {
         base.Start();
     }
-    public new void setSelectedPartVisual(bool viusal)
+
+    public void newKObj()
     {
-        this.selectedPart.SetActive(viusal);
+        this.kObj = Instantiate(this.kObjSO.original);
+        this.kObj.name = this.kObjSO.original.name;
+        this.kObj.transform.SetParent(this.gameObject.transform.Find("CounterTop"));
+        this.kObj.transform.localPosition = Vector3.zero;
+        this.kObjScript = this.kObj.GetComponent<KObjScript>();
+        this.kObjScript.setCurrentCounter(this.gameObject);
+        this.kObj.SetActive(true);
+        kObjCount++;
     }
-    /* public new void setKObjScript(KObjScript kObjScript)
+
+    public int getKObjCount()
     {
-        this.kObjScript = kObjScript;
+        return kObjCount;
     }
-    public new KObjScript getKObjScript()
-    {
-        return this.kObjScript;
-    }
-    public new void setNext(IKObjInterActions nextCounter)
-    {
-        this.nextCounter = nextCounter;
-    }
-    public new IKObjInterActions getNext()
-    {
-        return this.nextCounter;
-    }
-    public new KitcherObjectSO GetKitcherObjectSO()
-    {
-        return this.kitcherObject;
-    }
-    public new GameObject getKObj()
+
+    public GameObject getKObj()
     {
         return this.kObj;
     }
-    public new void setKObj(GameObject obj)
+
+    public void setKObj(GameObject kObj)
     {
-        this.kObj = obj;
-        this.kObj.transform.SetParent(this.GetTransform().Find("CounterTop"));
-        this.kObj.transform.localPosition=Vector3.zero;
-        this.kObjScript = this.kObj.GetComponent<KObjScript>();
-        this.kObjScript.setCurrentParent(this);
-        this.kObj.SetActive(true);
-    }
-    public new Transform GetTransform()
-    {
-        return this.gameObject.transform;
     }
 
-    public new string getName()
+    public void releaseKObj()
     {
-        return this.name;
+        this.kObj = null;
     }
-
-    public new int getInstanceID()
-    {
-        return this.InstanceID;
-    }
-
-    public new void releaseKObj()
-    {
-        Destroy(this.kObj);
-    } */
 }

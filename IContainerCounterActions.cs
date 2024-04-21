@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface IContainerCounterActions
 {
-
+    public void newKObj();
+    public int getKObjCount();
 }

@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 
 public class OnHitedEventArgs:EventArgs
 {
-    public IKObjInterActions hitedCounter
+    public UnityEngine.GameObject hitedCounter
     {
         get;set;
     }
@@ -30,7 +30,7 @@ public class IsPlayerActionsEnableArgs:EventArgs
 }
 
 
-public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
+public class Player : MonoBehaviour,IPlayerInterActions
 {
     public static Player instance
     {
@@ -44,7 +44,7 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
     [SerializeField] private float playerHeight = 2f;
     [SerializeField] private float interactionDistance = 2f;
     [SerializeField] private LayerMask counterLayer;
-    private IKObjInterActions counter;
+    private UnityEngine.GameObject counter;
     private OnHitedEventArgs onHitedEventArgs;
     public event EventHandler<OnHitedEventArgs> onHitedEvent;
     private bool Holded;
@@ -63,7 +63,6 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
             }
         }
     }
-    //private event Action<IsEnableArgs> onEnableEvent;
     private event Action<bool> onPlayerActionsEnableEvent;
     private void Awake()
     {
@@ -94,22 +93,23 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         {
             return;
         }
-        if(this.counter != null)
+        if(this.counter == null)
         {
-            if(this.counter.getKObj() != null)
-            {
-                CutKObj toCutKObjAction = this.counter.getGameObject().GetComponent<CutKObj>();
-                if( toCutKObjAction != null)
-                {
-                    toCutKObjAction.toCutKObj(this.counter.getKObj());
-                }else{
-                    Debug.Log("Not a cutting counter!");
-                }
-            }else{
-                if(this.counter.GetType() == typeof(CuttingCounter)){
-                    Debug.Log("No Kicthen Object to be cutted!");
-                }
-            }
+            return;
+        }
+        CuttingCounter cuttingCounter = this.counter.GetComponent<CuttingCounter>();
+        if(cuttingCounter == null)
+        {
+            Debug.Log(this.counter.name + " Is Not a cutting counter!");
+            return;
+        }
+        if(cuttingCounter.getKObj() != null)
+        {
+            CutKObj toCutKObjAction = cuttingCounter.GetComponent<CutKObj>();
+            toCutKObjAction.toCutKObj(cuttingCounter.getKObj());
+        }else
+        {
+            Debug.Log("Nothing to cut!");
         }
     }
     private void onEnableAction(bool e)
@@ -124,7 +124,6 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         Ray ray = m_Camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Debug.Log("Hited is " + hit.collider.gameObject.name);
             if(hit.collider.gameObject.name == "Player")
             {
                 this.isPlayerActionsEnable = true;
@@ -157,13 +156,21 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         {
             if(this.counter != null)
             {
-                if(this.counter.getKObj() == null)
+                if(this.counter.GetComponent<IContainerCounterActions>() != null)
                 {
-                    this.counter.setKObj(Instantiate(this.kObj));
+                    return;
+                }
+                IClearCounterActions clearCounter = this.counter.GetComponent<IClearCounterActions>();
+                ICuttingCounterActions cuttingCounter = this.counter.GetComponent<ICuttingCounterActions>();
+                if(clearCounter != null)
+                {
+                    clearCounter.setKObj(this.kObj);
                     Holded = false;
-                    releaseKObj();
-                }else{
-                    Debug.Log("The counter is not clear!");
+                }
+                if(cuttingCounter != null)
+                {
+                    cuttingCounter.setKObj(this.kObj);
+                    Holded = false;
                 }
             }
 
@@ -179,20 +186,16 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         }
         if(this.counter != null)
         {
-            if(this.counter.getKObj() != null)
+            IBaseActions comCounter = this.counter.GetComponent<IBaseActions>();
+            if(comCounter.getKObj() != null)
             {
-                if(this.counter.getKObj().transform.parent.transform.gameObject != this){
+                if(comCounter.getKObj().transform.parent.transform.gameObject != this){
                     if(!Holded){
-                        setKObj(Instantiate(this.counter.getKObj()));
-                        //this.counter.getKObj().transform.SetParent(this.transform.Find("HoldPoint"));
-                        //this.counter.getKObj().transform.localPosition = Vector3.zero;
+                        setKObj(comCounter.getKObj());
+                        comCounter.releaseKObj();
                         Holded = true;
-                        this.counter.releaseKObj();
                     }
                 }else{
-                    // this.counter.getKObj().transform.SetParent(this.counter.GetTransform().Find("CounterTop"));
-                    // this.counter.getKObj().transform.localPosition = Vector3.zero;
-                    // Holded = false;
                     Debug.Log("You already have the Kitchen Object");
                 }
             }
@@ -212,29 +215,24 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
     private void ClearKObj()
     {
         if(this.counter != null){
-            Debug.Log("To Clear Counter!");
-            if(this.counter.getKObj() != null){
-                if(this.counter.getNext() != null)
+            IBaseActions thisConterBaseActions = this.counter.GetComponent<IBaseActions>();
+            if(thisConterBaseActions.getKObj() != null){
+                if(thisConterBaseActions.getNext() != null)
                 {
-                    if(this.counter.getNext().getKObj() == null )
+                    UnityEngine.GameObject nextCounter = thisConterBaseActions.getNext();
+                    IBaseActions nextCounterActions = nextCounter.GetComponent<IBaseActions>();
+                    if(nextCounterActions.getKObj() == null )
                     {
-                        IKObjInterActions nextCounter = this.counter.getNext();
-                        //GameObject kObj = Instantiate(this.counter.getKObj());
-                        nextCounter.setKObj(Instantiate(this.counter.getKObj()));
-                        //nextCounter.getKObj().transform.SetParent(nextCounter.GetTransform().Find("CounterTop"));
-                        //nextCounter.getKObj().transform.localPosition=Vector3.zero;
-                        // this.counter.setKObjScript(nextCounter.getKObj().GetComponent<KObjScript>());
-                        // this.counter.getKObjScript().setCurrentParent(nextCounter);
-                        // this.counter.getKObj().SetActive(true);
-                        this.counter.releaseKObj();
+                        nextCounterActions.setKObj(thisConterBaseActions.getKObj());
+                        thisConterBaseActions.releaseKObj();
                     }else
                     {
                         Debug.Log("Next Counter isn't Clear!");
                     }
                 }else
                 {
-                    Debug.Log("Not Next Counter!");
-                    this.counter.releaseKObj();
+                    Debug.Log("No Next Counter!");
+                    Destroy(thisConterBaseActions.getKObj());
                 }
             }else
             {
@@ -253,39 +251,32 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         }
         if(this.counter != null)
         {
-            /* if(this.counter.GetType() == typeof(ClearCounter))
+            if(this.counter.GetComponent<IContainerCounterActions>() == null)
             {
-                Debug.Log("This is Clear Counter,Not a Container Counter");
                 return;
-            } */
+            }
+            Debug.Log("Newing...");
             newKObj();
         }else
         {
-            Debug.Log("Null to Put Kitchen Object");
             return;
         }
     }
     private void newKObj()
     {
-        Debug.Log("To Select Kitchen Object!");
         Quaternion roatation = Quaternion.identity;
         roatation.Set(0,0,0,0);
-        if(this.counter.getKObj() != null || this.counter.GetKitcherObjectSO() == null)
+        IBaseActions containerCounter = this.counter.GetComponent<IBaseActions>();
+        IContainerCounterActions containerCounterActions = this.counter.GetComponent<IContainerCounterActions>();
+        if(containerCounter.getKObj() != null)
         {
             Debug.Log("No Kitchen Object to NEW!");
             return;
         }else
         {
-            GameObject newKObj = (GameObject)Instantiate(
-                                    this.counter.
-                                    GetKitcherObjectSO().kObj,
-                                    SceneManager.GetActiveScene());
-            this.counter.setKObj(newKObj);
-            //this.counter.getKObj().transform.SetParent(this.counter.GetTransform().Find("CounterTop"));
-            //this.counter.getKObj().transform.localPosition = Vector3.zero;
-            // this.counter.setKObjScript(this.counter.getKObj().GetComponent<KObjScript>());
-            // this.counter.getKObjScript().setCurrentParent(this.counter);
-            // this.counter.getKObj().SetActive(true);
+            //KitcherObjectSO newKObj = Instantiate<KitcherObjectSO>(containerCounter.getKObj());
+            //containerCounter.setKObj(newKObj);
+            containerCounterActions.newKObj();
         }
     }
     // Start is called before the first frame update
@@ -297,10 +288,6 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
     // Update is called once per frame
     void Update()
     {
-        //Vector2 moved = gameInput.getVector2();
-        //Vector3 moveDir = new Vector3(moved.x,0f,moved.y);
-        //handleMove(moved,moveDir);
-        //doesHitSomething(moved,moveDir);
     }
 
     public bool IsWalking(){
@@ -341,10 +328,10 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         bool hit = Physics.Raycast(transform.position+Vector3.up*(playerHeight/5),lastInteractionDir,out RaycastHit hitedObject,interactionDistance,counterLayer);
         if(hit)
         {
-            bool geted = hitedObject.transform.TryGetComponent<IKObjInterActions>(out IKObjInterActions cObject);
-
-            if(geted)
+            UnityEngine.GameObject cObject = hitedObject.collider.gameObject;
+            if(cObject != null)
             {
+                Debug.Log("hitted is "+cObject.name);
                 this.counter = cObject;
                 setViusal(cObject);              
             }else
@@ -358,41 +345,11 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
             setViusal(null);
         }
     }
-    private void setViusal(IKObjInterActions counter)
+    private void setViusal(UnityEngine.GameObject counter)
     {
         onHitedEventArgs = new();
         this.onHitedEventArgs.hitedCounter = counter;
         onHitedEvent?.Invoke(this,onHitedEventArgs);
-    }
-
-    public void setKObjScript(KObjScript kObjScript)
-    {
-        this.kObjScript = kObjScript;
-    }
-
-    public KObjScript getKObjScript()
-    {
-        return this.kObjScript;
-    }
-
-    public void setNext(IKObjInterActions next)
-    {
-        Debug.Log("No need to set next!");
-    }
-
-    public IKObjInterActions getNext()
-    {
-        return null;
-    }
-
-    public KitcherObjectSO GetKitcherObjectSO()
-    {
-        return null;
-    }
-
-    public GameObject getKObj()
-    {
-        return kObj;
     }
 
     public void setKObj(GameObject obj)
@@ -401,28 +358,8 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
         this.kObj.transform.SetParent(this.transform.Find("HoldPoint"));
         this.kObj.transform.localPosition=Vector3.zero;
         this.kObjScript = this.kObj.GetComponent<KObjScript>();
-        this.kObjScript.setCurrentParent(this);
+        this.kObjScript.setCurrentCounter(this.gameObject);
         this.kObj.SetActive(true);
-    }
-
-    public Transform GetTransform()
-    {
-        return this.gameObject.transform;
-    }
-
-    public string getName()
-    {
-        return this.name;
-    }
-
-    public int getInstanceID()
-    {
-        return this.GetInstanceID();
-    }
-
-    public void releaseKObj()
-    {
-        Destroy(this.kObj);;
     }
     void OnMouseEnter()
     {
@@ -439,18 +376,8 @@ public class Player : MonoBehaviour,IKObjInterActions//,IPointerDownHandler
             this.transform.Find("PointerOver").gameObject.SetActive(false);
         }
     }
+}
 
-    public Transform getSelectedPart()
-    {
-        return null;
-    }
-
-    public void setSelectedPartVisual(bool viusal)
-    {
-    }
-
-    public GameObject getGameObject()
-    {
-        return this.gameObject;
-    }
+internal interface IPlayerInterActions
+{
 }

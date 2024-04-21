@@ -9,19 +9,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ClearCounter : BaseCounter//,IKObjInterActions
+public class ClearCounter : BaseCounter,IClearCounterActions,IBaseActions
 {
     public static ClearCounter instance
     {
         get;private set;
     }
-    //private static BaseCounter[] cList;
-    //[SerializeField] private new GameObject selectedPart;
-    private new KObjScript kObjScript;
-    private new IKObjInterActions nextCounter;
-    private new GameObject kObj;
+    private GameObject kObj;
+    private KObjScript kObjScript;
+    private new UnityEngine.GameObject nextCounter;
     private event Action<bool> onCounterActionsEnableEvent;
-    private new bool _isCounterActionsEnable;
+    private bool _isCounterActionsEnable;
     private bool isCounterActionsEnable
     {
         get{return _isCounterActionsEnable;}
@@ -34,8 +32,7 @@ public class ClearCounter : BaseCounter//,IKObjInterActions
             }
         }
     }
-    //private Camera m_Camera;
-    private new string hitedCounterName;
+    private string counterName;
     new void Awake()
     {
         base.Awake(); 
@@ -43,24 +40,21 @@ public class ClearCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.CounterList.Add(this);
-        Debug.Log("cheezeCounterList now has " + CounterList.Count());
+        BaseCounter.CounterList.Add(this.gameObject);
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterActionsEnableEvent += OnCounterActionsEnable;
-        //m_Camera = Camera.main;
-        hitedCounterName = "ClearCounterSelected" + InstanceID;
-        this.GetTransform().Find("ClearCounterSelected").name = hitedCounterName;
+        counterName = InstanceID.ToString();
+        this.gameObject.transform.Find("ClearCounterSelected").name = counterName;
     }
 
     private void toClick(object sender, OnClickArgs e)
     {
-        //Debug.Log("Clicked!");
         Vector3 mousePosition = e.mousePosition;
         Ray ray = m_Camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Debug.Log("Hited is " + hit.collider.gameObject.name);
-            if(hit.collider.gameObject.name == this.hitedCounterName)
+            if(hit.collider.gameObject.name == this.counterName)
             {
                 this.isCounterActionsEnable = true;
             }else
@@ -80,66 +74,30 @@ public class ClearCounter : BaseCounter//,IKObjInterActions
     protected void Update()
     {
     }
-    public new void setSelectedPartVisual(bool viusal)
+    public void setSelectedPartVisual(bool viusal)
     {
-        this.selectedPart.SetActive(viusal);
+        this.hittedPart.SetActive(viusal);
     }
-    public new KitcherObjectSO GetKitcherObjectSO()
+    public void setKObj(GameObject kObj)
     {
-        Debug.Log("This is Clear Counter only for be Clear!");
-        return null;
+        if(this.kObj != null)
+        {
+            return;
+        }
+        this.kObj = kObj;
+        this.kObjScript = kObj.GetComponent<KObjScript>();
+        this.kObj.transform.SetParent(this.CounterTop.transform);
+        this.kObj.transform.localPosition = new Vector3(0f,0f,0f);
+        this.kObjScript.setCurrentCounter(this.gameObject);
     }
-    /*
-    public void setKObjScript(KObjScript kObjScript)
-    {
-        this.kObjScript = kObjScript;
-    }
-    public KObjScript getKObjScript()
-    {
-        return this.kObjScript;
-    }
-    public void setNext(IKObjInterActions nextCounter)
-    {
-        this.nextCounter = nextCounter;
-    }
-    public IKObjInterActions getNext()
-    {
-        return this.nextCounter;
-    }
-    public KitcherObjectSO GetKitcherObjectSO()
-    {
-        return this.kitcherObject;
-    }
+
     public GameObject getKObj()
     {
         return this.kObj;
     }
-    public void setKObj(GameObject obj)
-    {
-        this.kObj = obj;
-        this.kObj.transform.SetParent(this.GetTransform().Find("CounterTop"));
-        this.kObj.transform.localPosition=Vector3.zero;
-        this.kObjScript = this.kObj.GetComponent<KObjScript>();
-        this.kObjScript.setCurrentParent(this);
-        this.kObj.SetActive(true);
-    }
-    public Transform GetTransform()
-    {
-        return this.transform;
-    }
-
-    public string getName()
-    {
-        return this.name;
-    }
-
-    public int getInstanceID()
-    {
-        return this.instanceID;
-    }
 
     public void releaseKObj()
     {
-        Destroy(this.kObj);
-    } */
+        this.kObj = null;
+    }
 }

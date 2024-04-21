@@ -15,13 +15,11 @@ public class PlatesCounter : BaseCounter//,IKObjInterActions
     {
         get;private set;
     }
-    //private static BaseCounter[] cList;
-    //[SerializeField] private new GameObject selectedPart;
-    private new KObjScript kObjScript;
-    private new IKObjInterActions nextCounter;
-    private new GameObject kObj;
+    private KObjScript kObjScript;
+    private new UnityEngine.GameObject nextCounter;
+    private KitcherObjectSO kObj;
     private event Action<bool> onCounterctionsEnableEvent;
-    private new bool _isCounterActionsEnable;
+    private bool _isCounterActionsEnable;
      private bool isCounterActionsEnable
     {
         get{return _isCounterActionsEnable;}
@@ -35,7 +33,7 @@ public class PlatesCounter : BaseCounter//,IKObjInterActions
         }
     } 
     //private new Camera m_Camera;
-    private new string hitedCounterName;
+    private string counterName;
     new void Awake()
     {
         base.Awake();
@@ -43,13 +41,12 @@ public class PlatesCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.CounterList.Add(this);
+        BaseCounter.CounterList.Add(this.gameObject);
         Debug.Log("tomatoCounterList now has " + CounterList.Count());
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterctionsEnableEvent += OnCounterActionsEnable;
-        //m_Camera = Camera.main;
-        hitedCounterName = "PlatesCounterSelected" + InstanceID;
-        this.GetTransform().Find("PlatesCounterSelected").name = hitedCounterName;
+        counterName = InstanceID.ToString();
+        this.gameObject.transform.Find("PlatesCounterSelected").name = counterName;
     }
     private void OnCounterActionsEnable(bool e)
     {
@@ -58,13 +55,12 @@ public class PlatesCounter : BaseCounter//,IKObjInterActions
 
     private void toClick(object sender, OnClickArgs e)
     {
-        //Debug.Log("Clicked!");
         Vector3 mousePosition = e.mousePosition;
         Ray ray = m_Camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Debug.Log("Hited is " + hit.collider.gameObject.name);
-            if(hit.collider.gameObject.name == this.hitedCounterName)
+            if(hit.collider.gameObject.name == this.counterName)
             {
                 this.isCounterActionsEnable = true;
             }else
@@ -77,65 +73,4 @@ public class PlatesCounter : BaseCounter//,IKObjInterActions
     {
         base.Start();
     }
-    public new void setSelectedPartVisual(bool viusal)
-    {
-        this.selectedPart.SetActive(viusal);
-    }
-    public new KitcherObjectSO GetKitcherObjectSO()
-    {
-        Debug.Log("This is Clear Counter only for be Clear!");
-        return null;
-    }
-    /* public new void setKObjScript(KObjScript kObjScript)
-    {
-        this.kObjScript = kObjScript;
-    }
-    public new KObjScript getKObjScript()
-    {
-        return this.kObjScript;
-    }
-    public new void setNext(IKObjInterActions nextCounter)
-    {
-        this.nextCounter = nextCounter;
-    }
-    public new IKObjInterActions getNext()
-    {
-        return this.nextCounter;
-    }
-    public new KitcherObjectSO GetKitcherObjectSO()
-    {
-        return this.kitcherObject;
-    }
-    public new GameObject getKObj()
-    {
-        return this.kObj;
-    }
-    public new void setKObj(GameObject obj)
-    {
-        this.kObj = obj;
-        this.kObj.transform.SetParent(this.GetTransform().Find("CounterTop"));
-        this.kObj.transform.localPosition=Vector3.zero;
-        this.kObjScript = this.kObj.GetComponent<KObjScript>();
-        this.kObjScript.setCurrentParent(this);
-        this.kObj.SetActive(true);
-    }
-    public new Transform GetTransform()
-    {
-        return this.gameObject.transform;
-    }
-
-    public new string getName()
-    {
-        return this.name;
-    }
-
-    public new int getInstanceID()
-    {
-        return this.InstanceID;
-    }
-
-    public new void releaseKObj()
-    {
-        Destroy(this.kObj);
-    } */
 }

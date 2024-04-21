@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CounterSelected : MonoBehaviour
 {
-    private GameObject hitedObject;
+    private UnityEngine.GameObject hitedObject;
     private void Awake()
     {
     }
@@ -17,22 +17,16 @@ public class CounterSelected : MonoBehaviour
     }
     private void changeState(object sender, OnHitedEventArgs e)
     {
-        //BaseCounter parent = this.GetComponentInParent<BaseCounter>();
         if(e.hitedCounter != null)
         {
-            //if(e.hitedCounter.getName() == parent.name)
-            //{
-                //Debug.Log("The object hited is " + e.hitedCounter.getName());
-                Debug.Log("Set the visual!");
-                e.hitedCounter.setSelectedPartVisual(true);
-                //show();
-            //}
+            Debug.Log("Set the visual!");
+            e.hitedCounter.GetComponentInParent<BaseCounter>().setHittedPartVisual(true);
         }else
         {
             hide();
         }
     }
-    private void show(GameObject selectedPart)
+    private void show(UnityEngine.GameObject selectedPart)
     {
         selectedPart.SetActive(true);
     }

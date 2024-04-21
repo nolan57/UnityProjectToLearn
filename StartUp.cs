@@ -20,8 +20,6 @@ public class StartUp : MonoBehaviour
             "PreObjects/TomatoContainerCounter",
             "PreObjects/CuttingCounter",
             "PreObjects/ClearCounter",
-            "PreObjects/TrashCounter",
-            "PreObjects/StoveCounter",
         };
         
         setCounterList(prefabPaths,new float2(0,0),Quaternion.identity);
@@ -30,8 +28,6 @@ public class StartUp : MonoBehaviour
             "PreObjects/CheezeContainerCounter",
             "PreObjects/CuttingCounter",
             "PreObjects/ClearCounter",
-            "PreObjects/TrashCounter",
-            "PreObjects/StoveCounter",
         };
         setCounterList(prefabPaths,new float2(0,-10),Quaternion.Euler(0f,180f,0f));
         setOrder();
@@ -46,7 +42,7 @@ public class StartUp : MonoBehaviour
         for (int i = 0;i<prefabPaths.Count();i++)
         {
             string prefabPath = prefabPaths[i];
-            GameObject prefab = Resources.Load<GameObject>(prefabPath);
+            UnityEngine.GameObject prefab = Resources.Load<UnityEngine.GameObject>(prefabPath);
             float row = startPoint.x;
             float col = startPoint.y;
             Vector3 position = new Vector3(row,0,col);
@@ -54,7 +50,7 @@ public class StartUp : MonoBehaviour
             {             
                 Debug.Log("Creating " + prefabPath);
                 position = position + new Vector3(-1.5f*i,0,0);
-                GameObject newObject = Instantiate(prefab,position,rotation);
+                UnityEngine.GameObject newObject = Instantiate(prefab, position, rotation);
                 newObject.SetActive(true);
             }
             else
@@ -67,44 +63,14 @@ public class StartUp : MonoBehaviour
     {
         for(int i = 0;i<BaseCounter.CounterList.Count();i++)
         {
-            //Debug.Log(" List[" + BaseCounter.counterList[i].getInstanceID() + "] is " + BaseCounter.counterList[i].getName() + "\n");
             if(i+1<BaseCounter.CounterList.Count())
             {
-                BaseCounter.CounterList[i].setNext(BaseCounter.CounterList[i+1]);
-                //Debug.Log(" List[" + BaseCounter.counterList[i].getInstanceID() + "] 's next counter is " + BaseCounter.counterList[i].getNext().getName() + "\n");
+                BaseCounter bcScript = BaseCounter.CounterList[i].GetComponentInParent<BaseCounter>();
+                bcScript.setNext(BaseCounter.CounterList[i+1]);
             }else{
-                BaseCounter.CounterList[i].setNext(null);
+                BaseCounter bcScript = BaseCounter.CounterList[i].GetComponentInParent<BaseCounter>();
+                bcScript.setNext(null);
             }
         }
     }
-    //prefabPath = "PreObjects/Shaped";
-        /* for (int i = 0;i<prefabPaths.Count();i++)
-        {
-            string prefabPath = prefabPaths[i];
-            GameObject prefab = Resources.Load<GameObject>(prefabPath);
-            Vector3 position = new Vector3(0, 0,0);
-            if (prefab != null)
-            {             
-                position = position + new Vector3(-1.5f*i,0,0);
-                Quaternion rotation = Quaternion.identity;
-                GameObject newObject = Instantiate(prefab,position,rotation);
-                newObject.SetActive(true);
-            }
-            else
-            {
-                Debug.LogError("Failed to load prefab at path: " + prefabPath);
-            }
-        }
-        //Debug.Log("List has " + BaseCounter.counterList.Count + " counters!");
-        for(int i = 0;i<BaseCounter.tomatoCounterList.Count();i++)
-        {
-            //Debug.Log(" List[" + BaseCounter.counterList[i].getInstanceID() + "] is " + BaseCounter.counterList[i].getName() + "\n");
-            if(i+1<BaseCounter.tomatoCounterList.Count())
-            {
-                BaseCounter.tomatoCounterList[i].setNext(BaseCounter.tomatoCounterList[i+1]);
-                //Debug.Log(" List[" + BaseCounter.counterList[i].getInstanceID() + "] 's next counter is " + BaseCounter.counterList[i].getNext().getName() + "\n");
-            }else{
-                BaseCounter.tomatoCounterList[i].setNext(null);
-            }
-        } */
 }

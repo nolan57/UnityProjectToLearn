@@ -9,19 +9,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CuttingCounter : BaseCounter//,IKObjInterActions
+public class CuttingCounter : BaseCounter,ICuttingCounterActions,IBaseActions
 {
     public static CuttingCounter instance
     {
         get;private set;
     }
-    //private static BaseCounter[] cList;
-    //[SerializeField] private new GameObject selectedPart;
-    private new KObjScript kObjScript;
-    private new IKObjInterActions nextCounter;
-    private new GameObject kObj;
+    private GameObject kObj;
+    private KObjScript kObjScript;
+    private new UnityEngine.GameObject nextCounter;
     private event Action<bool> onCounterActionsEnableEvent;
-    private new bool _isCounterActionsEnable;
+    private bool _isCounterActionsEnable;
      private bool isCounterActionsEnable
     {
         get{return _isCounterActionsEnable;}
@@ -34,8 +32,7 @@ public class CuttingCounter : BaseCounter//,IKObjInterActions
             }
         }
     } 
-    //private new Camera m_Camera;
-    private new string hitedCounterName;
+    private string counterName;
     new void Awake()
     {
         base.Awake();
@@ -43,28 +40,24 @@ public class CuttingCounter : BaseCounter//,IKObjInterActions
         {
             instance = this;
         }
-        BaseCounter.CounterList.Add(this);
-        Debug.Log("tomatoCounterList now has " + CounterList.Count());
+        BaseCounter.CounterList.Add(this.gameObject);
         BaseCounter.playerActions.OnClickEvents += toClick;
         onCounterActionsEnableEvent += OnCounterActionsEnable;
-        //m_Camera = Camera.main;
-        hitedCounterName = "TomatoCuttingCounterSelected" + InstanceID;
-        this.GetTransform().Find("TomatoCuttingCounterSelected").name = hitedCounterName;
+        counterName = InstanceID.ToString();
+        this.gameObject.transform.Find("CuttingCounterSelected").name = counterName;
     }
     private void OnCounterActionsEnable(bool e)
     {
         Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
-    } 
-
+    }
     private void toClick(object sender, OnClickArgs e)
     {
-        //Debug.Log("Clicked!");
         Vector3 mousePosition = e.mousePosition;
         Ray ray = m_Camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Debug.Log("Hited is " + hit.collider.gameObject.name);
-            if(hit.collider.gameObject.name == this.hitedCounterName)
+            if(hit.collider.gameObject.name == this.counterName)
             {
                 this.isCounterActionsEnable = true;
             }else
@@ -77,18 +70,30 @@ public class CuttingCounter : BaseCounter//,IKObjInterActions
     {
         base.Start();
     }
-    public new void setSelectedPartVisual(bool viusal)
+
+    public void setKObj(GameObject kObj)
     {
-        this.selectedPart.SetActive(viusal);
+        this.kObj = kObj;
+        this.kObjScript = kObj.GetComponent<KObjScript>();
+        this.kObj.transform.SetParent(this.gameObject.transform.Find("CounterTop"));
+        this.kObj.transform.localPosition = Vector3.zero;
+        this.kObjScript.setCurrentCounter(this.gameObject);
+        this.kObj.SetActive(true);
     }
-    public new IKObjInterActions getNext()
+
+    public GameObject getKObj()
     {
-        Debug.Log("This is Cutting Counter!");
-        return null;
+        return this.kObj;
     }
-    public new KitcherObjectSO GetKitcherObjectSO()
+
+    public void releaseKObj()
     {
-        Debug.Log("This is Cutting Counter only for Cutting");
-        return null;
+        this.kObj = null;
     }
+}
+
+internal interface ICuttingCounterActions
+{
+    public void setKObj(GameObject kObj);
+    public GameObject getKObj();
 }
