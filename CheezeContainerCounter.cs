@@ -9,7 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CheezeContainerCounter : BaseCounter//,IKObjInterActions
+public class CheezeContainerCounter : BaseCounter,IContainerCounterActions
 {
     public static CheezeContainerCounter instance
     {
