@@ -5,12 +5,15 @@ using System.Globalization;
 
 //using System.Numerics;
 using System.Runtime.CompilerServices;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Windows.Speech;
 //using Vector3 = UnityEngine.Vector3;
 
 public class OnHitedEventArgs:EventArgs
@@ -44,12 +47,14 @@ public class Player : MonoBehaviour,IPlayerInterActions
     [SerializeField] private float playerHeight = 2f;
     [SerializeField] private float interactionDistance = 2f;
     [SerializeField] private LayerMask counterLayer;
+    //[SerializeField] private Canvas canvas;
     private UnityEngine.GameObject counter;
     private OnHitedEventArgs onHitedEventArgs;
     public event EventHandler<OnHitedEventArgs> onHitedEvent;
     private bool Holded;
     private GameObject kObj;
     private Camera m_Camera;
+    [SerializeField]private Speech speech;
     private bool _isPlayerActionsEnable;
     private bool isPlayerActionsEnable
     {
@@ -85,6 +90,8 @@ public class Player : MonoBehaviour,IPlayerInterActions
         onPlayerActionsEnableEvent += onEnableAction;
         Physics.queriesHitTriggers = true;
         m_Camera = Camera.main;
+        speech = this.GetComponentInChildren<Speech>();
+        speech.toSpeech("");
     }
 
     private void toCut(object sender, InteractionArgs e)
@@ -100,26 +107,29 @@ public class Player : MonoBehaviour,IPlayerInterActions
         CuttingCounter cuttingCounter = this.counter.GetComponent<CuttingCounter>();
         if(cuttingCounter == null)
         {
-            Debug.Log(this.counter.name + " Is Not a cutting counter!");
+            //Debug.Log(this.counter.name + " Is Not a cutting counter!");
+            speech.toSpeech(this.counter.name + " Is Not a cutting counter!");
             return;
         }
         if(cuttingCounter.getKObj() != null)
         {
             CutKObj toCutKObjAction = cuttingCounter.GetComponent<CutKObj>();
-            toCutKObjAction.toCutKObj(cuttingCounter.getKObj());
+            toCutKObjAction?.toCutKObj(cuttingCounter.getKObj());
         }else
         {
             Debug.Log("Nothing to cut!");
+            speech.toSpeech("Nothing to cut!");
         }
     }
     private void onEnableAction(bool e)
     {
-        Debug.Log(this.gameObject.name + "'s actions's enabled is " + e);
+        //Debug.Log(this.gameObject.name + "'s actions's enabled is " + e); 
+        speech.toSpeech(this.gameObject.name + "'s actting is " + e);     
     }
 
     private void toClick(object sender, OnClickArgs e)
     {
-        Debug.Log("Clicked!");
+        speech.toSpeech("Clicked!");
         Vector3 mousePosition = e.mousePosition;
         Ray ray = m_Camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
@@ -175,7 +185,8 @@ public class Player : MonoBehaviour,IPlayerInterActions
             }
 
         }else{
-            Debug.Log("Nothing to put down!");
+            //Debug.Log("Nothing to put down!");
+            speech.toSpeech("Nothing to put down!");
         }
     }
 
@@ -196,11 +207,13 @@ public class Player : MonoBehaviour,IPlayerInterActions
                         Holded = true;
                     }
                 }else{
-                    Debug.Log("You already have the Kitchen Object");
+                    //Debug.Log("You already have the Kitchen Object");
+                    speech.toSpeech("You already have the Kitchen Object");
                 }
             }
         }else{
-            Debug.Log("You should select first!");
+            //Debug.Log("You should select first!");
+            speech.toSpeech("You should select a counter first");
         }
     }
 
@@ -227,20 +240,24 @@ public class Player : MonoBehaviour,IPlayerInterActions
                         thisConterBaseActions.releaseKObj();
                     }else
                     {
-                        Debug.Log("Next Counter isn't Clear!");
+                        //Debug.Log("Next Counter isn't Clear!");
+                        speech.toSpeech("Next counter isn't Clear!");
                     }
                 }else
                 {
-                    Debug.Log("No Next Counter!");
+                    //Debug.Log("No Next Counter!");
+                    speech.toSpeech("No Next Counter!");
                     Destroy(thisConterBaseActions.getKObj());
                 }
             }else
             {
-                Debug.Log("Nothing to be Cleared!");
+                //Debug.Log("Nothing to be Cleared!");
+                speech.toSpeech("Nothing to be Cleared!");
             }
         }else
         {
-            Debug.Log("Null to Invoke!");
+            //Debug.Log("Null to Invoke!");
+            speech.toSpeech("Null to Invoke!");
         }
     }
 
@@ -255,7 +272,8 @@ public class Player : MonoBehaviour,IPlayerInterActions
             {
                 return;
             }
-            Debug.Log("Newing...");
+            //Debug.Log("Newing...");
+            speech.toSpeech("Newing...");
             newKObj();
         }else
         {
@@ -270,7 +288,8 @@ public class Player : MonoBehaviour,IPlayerInterActions
         IContainerCounterActions containerCounterActions = this.counter.GetComponent<IContainerCounterActions>();
         if(containerCounter.getKObj() != null)
         {
-            Debug.Log("No Kitchen Object to NEW!");
+            //Debug.Log("No Kitchen Object to NEW!");
+            speech.toSpeech("No kitchen Objec to NEW!");
             return;
         }else
         {
